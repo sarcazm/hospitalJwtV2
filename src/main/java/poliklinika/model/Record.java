@@ -19,11 +19,11 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "patient_id")
     private Patient patinetId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH)
     @JoinColumn(name = "doctor_id")
     private Doctor doctorId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH)
     @JoinColumn(name = "service_id")
     private Service serviceId;
 

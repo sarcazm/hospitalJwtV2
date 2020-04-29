@@ -34,7 +34,7 @@ public class Doctor  extends BaseEntity{
             joinColumns = {@JoinColumn(name = "doctor_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "specialty_id", referencedColumnName = "id")})
     private Specialty specialty;*/
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "specialty_id")
     private Specialty specialty;
 

@@ -70,11 +70,19 @@ public class PatientServiceImpl implements PatientService {
         log.info("IN delete - patient with id: {} successfully deleted");
     }
 
+
+
     @Override
     public Patient findByUsername(String username) {
         Patient result = patientRepository.findByUsername(username);
         log.info("IN findByUsername - patient: {} found by username: {}", result, username);
         return result;
+    }
+
+    @Override
+    public void deleteByUsername(String username) {
+        patientRepository.deleteByUsername(username);
+        log.info("IN delete - patient with username: {} successfully deleted", username);
     }
 
     @Override

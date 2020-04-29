@@ -19,5 +19,7 @@ public interface PatientService {
 
     Patient findByUsername(String username);
 
+    void deleteByUsername(String username);
+
     List<Record> getAllRecords(String username);
 }

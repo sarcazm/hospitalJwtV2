@@ -28,7 +28,7 @@ public class Patient extends BaseEntity {
     @Column(name = "username")
     private String username;
 
-    @OneToMany(mappedBy = "patinetId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patinetId", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
     /*@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

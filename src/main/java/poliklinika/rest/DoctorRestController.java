@@ -3,6 +3,7 @@ package poliklinika.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import poliklinika.dto.DoRecordDto;
 import poliklinika.dto.PatientDeleteDto;
@@ -11,6 +12,8 @@ import poliklinika.dto.RecordDto;
 import poliklinika.model.Patient;
 import poliklinika.model.Record;
 import poliklinika.model.Status;
+import poliklinika.repository.PatientRepository;
+import poliklinika.repository.UserRepository;
 import poliklinika.security.jwt.JwtTokenProvider;
 import poliklinika.service.DoctorService;
 import poliklinika.service.PatientService;
@@ -28,11 +31,16 @@ public class DoctorRestController {
     private final JwtTokenProvider jwtTokenProvider;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final PatientRepository patientRepository;
+    private final UserRepository userRepository;
     @Autowired
-    public DoctorRestController(JwtTokenProvider jwtTokenProvider, DoctorService doctorService, PatientService patientService) {
+    public DoctorRestController(JwtTokenProvider jwtTokenProvider, DoctorService doctorService, PatientService patientService,
+                                PatientRepository patientRepository, UserRepository userRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.patientRepository= patientRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/all-records")
@@ -54,32 +62,37 @@ public class DoctorRestController {
         Record record = doctorService.addRecord(doRecordDto, jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
         return new ResponseEntity<RecordDto>(RecordDto.fromRecord(record), HttpStatus.OK);
     }
-
-    @PostMapping("/delete")
-    public ResponseEntity deletePatient(@RequestBody PatientDeleteDto patientDeleteDto){
+    @Transactional
+    @DeleteMapping("delete/patient/username/{username}")
+    public ResponseEntity deletePatient(@PathVariable("username") String username){
         //почему то не удаляет из БД
         //Как лучше удалять? прям здесь? Или в DoctorsServiceImpl?
-        boolean isDataBase = false;
+        /*boolean isDataBase = false;
         boolean deleteInDataBase = false;
         String yesOrNo = "no";
-        Patient patient = patientService.findByUsername(patientDeleteDto.getUsername());
-        patient.setStatus(Status.DELETED);
+        Patient patient = patientService.findByUsername(username);
+        //patient.setStatus(Status.DELETED);
         if (patient != null){
             isDataBase = true;
             patientService.delete(patient.getId());
-            patient = patientService.findByUsername(patientDeleteDto.getUsername());
+            patient = patientService.findByUsername(username);
             if (patient == null)deleteInDataBase = true;
         }
         System.out.println("Нашли? " + isDataBase);
-        System.out.println("Удалили? " + deleteInDataBase);
+        System.out.println("Удалили? " + deleteInDataBase);*/
 
         //этот метод не работает для удаления
-        //doctorService.deletePatient(patientDeleteDto.getUsername());
+        //doctorService.deletePatient(username);
+       // patientRepository.deleteByUsername(username);
+
+        //System.out.println(userRepository.findByUsername("pat5"));
+        patientRepository.delete(patientRepository.findByUsername("pat5"));
+        //userRepository.delete(userRepository.findByUsername("pat5"));
 
         Map<Object, Object> res = new HashMap<>();
-        res.put("patient", patientDeleteDto.getUsername());
-        if (isDataBase && deleteInDataBase)yesOrNo = "yes";
-        res.put("delete", yesOrNo);
+        res.put("patient", username);
+        //if (isDataBase && deleteInDataBase)yesOrNo = "yes";
+        //res.put("delete", yesOrNo);
         return ResponseEntity.ok(res);
     }
 
